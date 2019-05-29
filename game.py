@@ -9,10 +9,10 @@ class tictactoe:
 
     def isGameOver(self):
         win = False
-        for i in len(self.state):
+        for i in range(0,len(self.state)):
             if self.state[i][0] == self.state[i][1] == self.state[i][2] != 0:
                 win = True
-        for i in len(self.state[0]):
+        for i in range(0,len(self.state[0])):
             if self.state[0][i] == self.state[1][i] == self.state[2][i] != 0:
                 win = True
         if self.state[0][0] == self.state[1][1] == self.state[2][2] != 0:
@@ -20,6 +20,12 @@ class tictactoe:
         elif self.state[0][2] == self.state[1][1] == self.state[2][0] != 0:
             win = True
         return win
+
+    def reset(self):
+        self.state = [[0,0,0],
+                [0,0,0],
+                [0,0,0]]
+        return
 
     def move(self,player,row,col):
 
@@ -47,7 +53,7 @@ class tictactoe:
 
     def drawState(self):
         pyg.display.init()
-        display_height = 300
+        display_height = 400
         display_width = 300
         disp = pyg.display.set_mode([display_width,display_height])
         disp.fill((255,255,255))
@@ -77,7 +83,14 @@ class tictactoe:
                         elif self.state[k][l] == 2:
                             #draw a O
                             self.printO(k,l,disp)
+
+
+
             pyg.display.update()
+            if self.isGameOver() == True:
+                pyg.time.delay(1000)
+                self.printClear(disp)
+                self.reset()
             clock.tick(100)
 
 
@@ -92,6 +105,14 @@ class tictactoe:
         pr = row*100 #Pixel Row
         pc = column*100 #Pixel Column
         pyg.draw.circle(disp,(0,0,0),[pc+50,pr+50],30,1)
+        return
+
+    def printClear(self,disp):
+        disp.fill((255,255,255))
+        pyg.draw.line(disp,(0,0,0),[100,0],[100,300],1)
+        pyg.draw.line(disp,(0,0,0),[200,0],[200,300],1)
+        pyg.draw.line(disp,(0,0,0),[0,100],[300,100],1)
+        pyg.draw.line(disp,(0,0,0),[0,200],[300,200],1)
         return
 
 x = tictactoe()
