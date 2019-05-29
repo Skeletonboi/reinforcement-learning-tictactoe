@@ -1,4 +1,5 @@
 import math as math
+import pygame as pyg
 class tictactoe:
     def __init__(self):
         self.state = [[0,0,0],
@@ -20,16 +21,16 @@ class tictactoe:
             win = True
         return win
 
-    def move(self,player,pos):
-        row = math.floor(pos/3)
-        if self.state[row][pos-3*row] != 0:
+    def move(self,player,row,col):
+
+        if self.state[row][col] != 0:
             print("Taken Spot!")
             return False
-        elif pos > 8:
+        elif row > 2 | col > 2:
             print("Position Out of Bounds!")
             return False
         else:
-            self.state[row][pos-3*row] == player
+            self.state[row][col] = player
             return True
 
     def printState(self):
@@ -43,3 +44,57 @@ class tictactoe:
         h = self.state[2][1]
         i = self.state[2][2]
         print("{}|{}|{}\n-----\n{}|{}|{}\n-----\n{}|{}|{}".format(a,b,c,d,e,f,g,h,i))
+
+    def drawState(self):
+        pyg.display.init()
+        display_height = 300
+        display_width = 300
+        disp = pyg.display.set_mode([display_width,display_height])
+        disp.fill((255,255,255))
+        pyg.draw.line(disp,(0,0,0),[100,0],[100,300],1)
+        pyg.draw.line(disp,(0,0,0),[200,0],[200,300],1)
+        pyg.draw.line(disp,(0,0,0),[0,100],[300,100],1)
+        pyg.draw.line(disp,(0,0,0),[0,200],[300,200],1)
+
+        clock = pyg.time.Clock()
+        while True:
+            mpos = pyg.mouse.get_pos()
+            for i in pyg.event.get():
+                if i.type == pyg.QUIT:
+                    exit()
+                elif i.type == pyg.KEYDOWN:
+                    if i.key == 113:
+                        exit()
+                elif i.type == pyg.MOUSEBUTTONDOWN:
+                    col = math.floor(mpos[0]/100)
+                    row = math.floor(mpos[1]/100)
+                    self.move(1,row,col)
+                for k in range(0,len(self.state)):
+                    for l in range(0,len(self.state[k])):
+                        if self.state[k][l] == 1:
+                            #draw a X
+                            self.printX(k,l,disp)
+                        elif self.state[k][l] == 2:
+                            #draw a O
+                            self.printO(k,l,disp)
+            pyg.display.update()
+            clock.tick(100)
+
+
+    def printX(self,row,column,disp):
+        pr = row*100 #Pixel Row
+        pc = column*100 #Pixel Column
+        pyg.draw.line(disp,(0,0,0),[pc+20,pr+20],[pc+80,pr+80],1)
+        pyg.draw.line(disp,(0,0,0),[pc+80,pr+20],[pc+20,pr+80],1)
+        return
+
+    def printO(self,row,column,disp):
+        pr = row*100 #Pixel Row
+        pc = column*100 #Pixel Column
+        pyg.draw.circle(disp,(0,0,0),[pc+50,pr+50],30,1)
+        return
+
+x = tictactoe()
+
+
+x.drawState()
