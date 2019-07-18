@@ -9,4 +9,4 @@ hidden = [neuron(input) for i in range(0,5)]
 
 output = [neuron(hidden) for i in range(0,2)]
 
-cost = yowhat
+cost = np.dot()

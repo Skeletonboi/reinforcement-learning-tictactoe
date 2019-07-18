@@ -1,8 +1,34 @@
-from random import uniform
+import random as rd
+import numpy as np
 class neuron:
-    def __init__(self,input_length):
-        self.input_layer = [uniform(0,1) for i in range(0,input_length-1)]
-        self.hidden_layers = [
+    def __init__(self,type,input_len):
+        self.weights = np.array(rd.uniform(0,1))
+        # last unit of weights vec will be the bias
+        self.output_value = 0
+        self.type = type
+
+    def update(self,input):
+        # Neuron feeds-forward using the input data from previous input_layer
+        # Input should be array data-type
+        input_b = input.append(1)
+        value = np.dot(self.weights,input_b)
+        if type == 'Relu':
+            if value > 0:
+                self.output_value = value
+            else:
+                self.output_value = 0
+        elif type == 'sigmoid':
+            self.output_value = 1/(1+np.exp(-value))
+
+    def activation(self,type):
+        # B
+
+
+
+class neuralnet:
+    def __init__(self,input_len,num_hidden,output_len):
+        self.input_layer = [neuron() for i in range(0,input_length-1)]
+        self.hidden_layers = []
 
 
 #Q-Values for each action taken from each state estimated by a single neural net;
