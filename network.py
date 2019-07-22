@@ -10,6 +10,7 @@ class neuron:
     def update(self,input):
         # Neuron feeds-forward using the input data from previous input_layer
         # Input should be array data-type
+        # Neuron output value depends on activation type (Relu or Sigmoid)
         input_b = input.append(1)
         value = np.dot(self.weights,input_b)
         if type == 'Relu':
@@ -20,14 +21,10 @@ class neuron:
         elif type == 'sigmoid':
             self.output_value = 1/(1+np.exp(-value))
 
-    def activation(self,type):
-        # B
-
-
 
 class neuralnet:
     def __init__(self,input_len,num_hidden,output_len):
-        self.input_layer = [neuron() for i in range(0,input_length-1)]
+        self.input_layer = [0 for i in range(0,input_length-1)]
         self.hidden_layers = []
 
 
