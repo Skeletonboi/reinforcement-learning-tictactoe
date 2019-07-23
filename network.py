@@ -1,5 +1,7 @@
 import random as rd
 import numpy as np
+
+
 class neuron:
     def __init__(self,type,input_len):
         self.weights = np.array(rd.uniform(0,1))
@@ -21,11 +23,38 @@ class neuron:
         elif type == 'sigmoid':
             self.output_value = 1/(1+np.exp(-value))
 
-
+# TEMPORARY: NEURAL NET WILL BE HARDCODED AS RELU HIDDEN LAYERS AND SIGMOID OUTPUT LAYER.
 class neuralnet:
-    def __init__(self,input_len,num_hidden,output_len):
-        self.input_layer = [0 for i in range(0,input_length-1)]
-        self.hidden_layers = []
+    def __init__(self,input_len,hidden_len,hidden_num,output_len):
+        self.input_layer = [rd.uniform(0,1) for i in range(0,input_len)]
+        self.hidden_layers = [[neuron('Relu',10) for i in range(0,hidden_len)] for i in range(0,hidden_num)]
+        self.output_layer = [rd.uniform(0,1) for i in range(0,output_len)]
+
+    def print_net(self):
+        # Visualizes the neural network in an easy-to-understand fashion
+        # Obtaining net layer sizes
+        l_in = length(self.input_layer)
+        l_hid_num = length(self.hidden_layers)
+        l_hid = length(self.hidden_layers[0])
+        l_out = length(self.output_layer)
+
+        width = 2 + l_hid_num
+        height = max(l_in,l_hid,l_out)
+
+        g_in = (height - l_in)/2
+        g_hid = (height - l_hid)/2
+        g_out = (height - l_out)/2
+
+        net = [[0 for i in range(0,width)] for i in range(0,height)]
+
+        for i in range(0,length(net)):
+            net[i][0] = self.input_layer
+
+
+
+x = neuralnet(5,8,2,1)
+
+
 
 
 #Q-Values for each action taken from each state estimated by a single neural net;
