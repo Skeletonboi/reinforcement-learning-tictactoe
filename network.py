@@ -27,28 +27,41 @@ class neuron:
 class neuralnet:
     def __init__(self,input_len,hidden_len,hidden_num,output_len):
         self.input_layer = [rd.uniform(0,1) for i in range(0,input_len)]
-        self.hidden_layers = [[neuron('Relu',10) for i in range(0,hidden_len)] for i in range(0,hidden_num)]
-        self.output_layer = [rd.uniform(0,1) for i in range(0,output_len)]
+        if hidden_num == 1:
+            self.hidden_layers = [[neuron('Relu',input_len) for i in range(0,hidden_len)]]
+        else:
+            self.hidden_layers = [[neuron('Relu',input_len) for i in range(0,hidden_len)]]
+            for i in range(0,hidden_num):
+                self.hidden_layers.append([neuron('Relu',len(self.hidden_layers[i])) for i in range(0,hidden_len)])
+        self.output_layer = [neuron('sigmoid',5) for i in range(0,output_len)]
 
     def print_net(self):
         # Visualizes the neural network in an easy-to-understand fashion
         # Obtaining net layer sizes
-        l_in = length(self.input_layer)
-        l_hid_num = length(self.hidden_layers)
-        l_hid = length(self.hidden_layers[0])
-        l_out = length(self.output_layer)
-
+        l_in = len(self.input_layer)
+        l_hid_num = len(self.hidden_layers)
+        l_hid = len(self.hidden_layers[0])
+        l_out = len(self.output_layer)
+        # Measuring visual parameters
+        # Grid Dimensions:
         width = 2 + l_hid_num
         height = max(l_in,l_hid,l_out)
 
         g_in = (height - l_in)/2
         g_hid = (height - l_hid)/2
         g_out = (height - l_out)/2
-
+        # Initializing empty net matrix
         net = [[0 for i in range(0,width)] for i in range(0,height)]
+        # Writing the values of each Neuron
+        for i in range(0,l_in):
+            net[i][0] = self.input_layer[i]
+        for j in range(1,l_hid_num):
+            for i in range(0,l_hid):
+                net[i][j] = self.hidden_layers[j][i]
+        for i in range(0,l_out):
+            net[i][l_hid_num+1] = self.output_layer[i]
 
-        for i in range(0,length(net)):
-            net[i][0] = self.input_layer
+        for k in range(0,len([object])
 
 
 
