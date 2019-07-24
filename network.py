@@ -13,6 +13,7 @@ class neuron:
         # Neuron feeds-forward using the input data from previous input_layer
         # Input should be array data-type
         # Neuron output value depends on activation type (Relu or Sigmoid)
+        # Last item of weights vector is bias (for each neuron)
         input_b = input.append(1)
         value = np.dot(self.weights,input_b)
         if self.type == 'Relu':
@@ -40,7 +41,9 @@ class neuralnet:
                 #self.hidden_layers.append([neuron('Relu',len(self.hidden_layers[j])) for k in range(0,hidden_len)])
         self.output_layer = [neuron('sigmoid',hidden_len) for i in range(0,output_len)]
 
-    def update_input(self,input_vec):
+
+
+    def setInput(self,input_vec):
         # Ensure input_vector is the same size as the neural net input layer
         if len(input_vec) != len(self.input_layer):
             print('Attempted Input Update Vector size does not match network input size')
@@ -50,11 +53,33 @@ class neuralnet:
         # Update holding input_vector number
         self.input_layer = input_vec
 
-    def forward_net(self):
+    def forward_step(self):
         # Updates hidden layer neuron values with weight_vector multiplication and pass through to activation function
-        for i in self.hidden_layers:
-            for n in i:
-                n.update(self.input_layer)
+        # Starting with the first layer...
+        for n in self.hidden_layers[0]:
+            n.update(self.input_layer)
+        # And every subsequent hidden layer...
+        for i in range(1,self.hidden_num):
+            prev_hid_vals = []
+            for k in self.hidden_layers[i-1]:
+                prev_hid_vals.append(k.output_value)
+            for n in self.hidden_layers[i]:
+                n.update(prev_hid_vals)
+        # Updates output layer neuron values with "..."
+        last_hid_vals = []
+        for k in self.hidden_layers[-1]:
+            last_hid_vals.append(k.output_value)
+        for n in self.output_layer:
+            n.update(last_hid_vals)
+
+
+
+    def getCost(self,xis,yis):
+        # xis is the input data, yi is/are the corresponding output value(s)
+        self.setInput(xis)
+        self.forward_step()
+
+
 
     def print_net(self):
         # Visualizes the neural network in an easy-to-understand fashion
