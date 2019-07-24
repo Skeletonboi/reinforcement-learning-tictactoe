@@ -6,7 +6,7 @@ class neuron:
     def __init__(self,type,input_len):
         self.weights = np.array(rd.uniform(0,1))
         # last unit of weights vec will be the bias
-        self.output_value = 0
+        self.output_value = rd.uniform(0,1)
         self.type = type
 
     def update(self,input):
@@ -15,25 +15,46 @@ class neuron:
         # Neuron output value depends on activation type (Relu or Sigmoid)
         input_b = input.append(1)
         value = np.dot(self.weights,input_b)
-        if type == 'Relu':
+        if self.type == 'Relu':
             if value > 0:
                 self.output_value = value
             else:
                 self.output_value = 0
-        elif type == 'sigmoid':
+        elif self.type == 'sigmoid':
             self.output_value = 1/(1+np.exp(-value))
 
 # TEMPORARY: NEURAL NET WILL BE HARDCODED AS RELU HIDDEN LAYERS AND SIGMOID OUTPUT LAYER.
 class neuralnet:
     def __init__(self,input_len,hidden_len,hidden_num,output_len):
-        self.input_layer = [rd.uniform(0,1) for i in range(0,input_len)]
-        if hidden_num == 1:
-            self.hidden_layers = [[neuron('Relu',input_len) for i in range(0,hidden_len)]]
-        else:
-            self.hidden_layers = [[neuron('Relu',input_len) for i in range(0,hidden_len)]]
-            for i in range(0,hidden_num):
-                self.hidden_layers.append([neuron('Relu',len(self.hidden_layers[i])) for i in range(0,hidden_len)])
-        self.output_layer = [neuron('sigmoid',5) for i in range(0,output_len)]
+        self.input_len = input_len
+        self.hidden_num = hidden_num
+        self.hidden_len = hidden_len
+        self.output_len = output_len
+
+        self.input_layer = [-999 for i in range(0,input_len)]
+        self.hidden_layers = [[neuron('Relu',input_len) for i in range(hidden_len)]]
+        if hidden_num != 0:
+            for k in range(hidden_num-1):
+                self.hidden_layers.append([neuron('Relu',hidden_len) for i in range(hidden_len)])
+                # Commented below is half-broken code for hidden layer initiliazation with varying hidden layer lengths
+                #self.hidden_layers.append([neuron('Relu',len(self.hidden_layers[j])) for k in range(0,hidden_len)])
+        self.output_layer = [neuron('sigmoid',hidden_len) for i in range(0,output_len)]
+
+    def update_input(self,input_vec):
+        # Ensure input_vector is the same size as the neural net input layer
+        if len(input_vec) != len(self.input_layer):
+            print('Attempted Input Update Vector size does not match network input size')
+            return(False)
+        # NEEDED: Ensures input_vector items are numerical (and within 0,1)
+
+        # Update holding input_vector number
+        self.input_layer = input_vec
+
+    def forward_net(self):
+        # Updates hidden layer neuron values with weight_vector multiplication and pass through to activation function
+        for i in self.hidden_layers:
+            for n in i:
+                n.update(self.input_layer)
 
     def print_net(self):
         # Visualizes the neural network in an easy-to-understand fashion
@@ -44,6 +65,11 @@ class neuralnet:
         l_out = len(self.output_layer)
         # Measuring visual parameters
         # Grid Dimensions:
+        print('in:', l_in)
+        print('hidnum',l_hid_num)
+        print('hid',l_hid)
+        print('l_out',l_out)
+
         width = 2 + l_hid_num
         height = max(l_in,l_hid,l_out)
 
@@ -55,17 +81,19 @@ class neuralnet:
         # Writing the values of each Neuron
         for i in range(0,l_in):
             net[i][0] = self.input_layer[i]
-        for j in range(1,l_hid_num):
+        for j in range(0,l_hid_num):
             for i in range(0,l_hid):
-                net[i][j] = self.hidden_layers[j][i]
+                net[i][j+1] = self.hidden_layers[j][i].output_value
         for i in range(0,l_out):
-            net[i][l_hid_num+1] = self.output_layer[i]
+            net[i][l_hid_num+1] = self.output_layer[i].output_value
+        # Printing neural network as rows of arrays
+        for k in range(0,len(net)):
+            print(net[k])
 
-        for k in range(0,len([object])
 
 
-
-x = neuralnet(5,8,2,1)
+x = neuralnet(5,8,2,3)
+x.print_net()
 
 
 
