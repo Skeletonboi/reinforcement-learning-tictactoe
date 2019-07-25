@@ -1,6 +1,6 @@
 import random as rd
 import numpy as np
-import neuron from neuron
+from neuron import neuron
 
 
 # TEMPORARY: NEURAL NET WILL BE HARDCODED AS RELU HIDDEN LAYERS AND SIGMOID OUTPUT LAYER.

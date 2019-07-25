@@ -1,3 +1,5 @@
+import random as rd
+import numpy as np
 # Neuron class for neural network object
 class neuron:
     def __init__(self,type,input_len):
