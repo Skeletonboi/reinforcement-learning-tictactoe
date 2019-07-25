@@ -4,7 +4,9 @@ import numpy as np
 
 class neuron:
     def __init__(self,type,input_len):
-        self.weights = np.array(rd.uniform(0,1))
+        self.weights = []
+        for i in range(input_len+1):
+            self.weights.append(rd.uniform(0,1))
         # last unit of weights vec will be the bias
         self.output_value = rd.uniform(0,1)
         self.type = type
@@ -14,8 +16,11 @@ class neuron:
         # Input should be array data-type
         # Neuron output value depends on activation type (Relu or Sigmoid)
         # Last item of weights vector is bias (for each neuron)
-        input_b = input.append(1)
+        input_b = input + [1]
+        #print('this',input_b)
+        #print('weight',self.weights)
         value = np.dot(self.weights,input_b)
+        #print('that',value)
         if self.type == 'Relu':
             if value > 0:
                 self.output_value = value
@@ -58,6 +63,7 @@ class neuralnet:
         # Starting with the first layer...
         for n in self.hidden_layers[0]:
             n.update(self.input_layer)
+
         # And every subsequent hidden layer...
         for i in range(1,self.hidden_num):
             prev_hid_vals = []
@@ -83,7 +89,7 @@ class neuralnet:
         for i in self.output_layer:
             y.append(i.output_value)
         # RMSE Calculation
-        np.sum((y-yis)**2)
+        return(np.sum(np.subtract(y,yis)**2)/self.output_len)
 
 
     def print_net(self):
@@ -95,11 +101,6 @@ class neuralnet:
         l_out = len(self.output_layer)
         # Measuring visual parameters
         # Grid Dimensions:
-        print('in:', l_in)
-        print('hidnum',l_hid_num)
-        print('hid',l_hid)
-        print('l_out',l_out)
-
         width = 2 + l_hid_num
         height = max(l_in,l_hid,l_out)
 
@@ -122,8 +123,13 @@ class neuralnet:
 
 
 
-x = neuralnet(5,8,2,3)
+x = neuralnet(4,5,2,2)
 x.print_net()
+inp_data = [[rd.uniform(0,1) for i in range(4)] for i in range(10)]
+out_data = [[rd.uniform(0,1) for j in range(2)] for i in range (10)]
+
+for i in range(10):
+    print(x.getCost(inp_data[i],out_data[i]))
 
 
 
