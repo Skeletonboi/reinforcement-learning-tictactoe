@@ -75,10 +75,15 @@ class neuralnet:
 
 
     def getCost(self,xis,yis):
-        # xis is the input data, yi is/are the corresponding output value(s)
+        # xis is the input data vector, yi is/are the corresponding output value(s)
         self.setInput(xis)
         self.forward_step()
-
+        # Getting output layer values
+        y = []
+        for i in self.output_layer:
+            y.append(i.output_value)
+        # RMSE Calculation
+        np.sum((y-yis)**2)
 
 
     def print_net(self):
