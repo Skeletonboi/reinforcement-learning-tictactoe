@@ -110,11 +110,11 @@ for i in range(10):
 
 #Q-Values for each action taken from each state estimated by a single neural net;
 # Network input are states;
-# Network output nodes are Q-values of each action taeken at the state;
+# Network output nodes are Q-values of each action taken at the state;
 
 # Objective is to learn optimal Q-function (state-action valuation function)
 # that continues to satisfy Bellman optimality equation:
-#q*(s,a) = E[R_t+1 + discount*max_a'(q(s',a')]
+# q*(s,a) = E[R_t+1 + discount*max_a'(q(s',a')]
 
 # Loss function will be calculated through the right hand side of Bellman optimality
 # equation;

@@ -75,6 +75,7 @@ class tictactoe:
                     col = math.floor(mpos[0]/100)
                     row = math.floor(mpos[1]/100)
                     self.move(1,row,col)
+                # Draw the game board
                 for k in range(0,len(self.state)):
                     for l in range(0,len(self.state[k])):
                         if self.state[k][l] == 1:
@@ -88,7 +89,7 @@ class tictactoe:
 
             pyg.display.update()
             if self.isGameOver() == True:
-                pyg.time.delay(1000)
+                pyg.time.delay(500)
                 self.printClear(disp)
                 self.reset()
             clock.tick(100)

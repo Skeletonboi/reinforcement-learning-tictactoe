@@ -1,12 +1,14 @@
-import numpy as np
-#import torch
-import random
-from neuron import neuron
+import torch
+import torch.nn as nn
 
-input = [0 for i in range(0,9)]
+class SNC(nn.Module):
+    def __init__(self):
+        super(SNC,self).__init__()
+        self.fc1 = nn.Linear(9,1)
 
-hidden = [neuron(input) for i in range(0,5)]
+    def forward(self,I):
+        x = self.fc1(I)
+        return x
 
-output = [neuron(hidden) for i in range(0,2)]
-
-cost = np.dot()
+smallNN = SNC()
+print(smallNN.fc1.weight)
