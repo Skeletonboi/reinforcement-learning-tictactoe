@@ -118,7 +118,12 @@ class tictactoe:
         pyg.draw.line(disp,(0,0,0),[0,200],[300,200],1)
         return
 
-x = tictactoe()
+    def outputState(self):
+        out = []
+        for i in range(len(self.state)):
+            for j in range(3):
+                out.append(self.state[i][j])
+        return out
 
 
-x.drawState()
+
