@@ -1,5 +1,7 @@
 import math as math
 import pygame as pyg
+import numpy as np
+
 class tictactoe:
     def __init__(self):
         self.state = [[0,0,0],
