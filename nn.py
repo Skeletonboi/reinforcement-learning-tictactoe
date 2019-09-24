@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 import random
 
 # Initialize Hyperparameters
-seed = random.randint(1, 1000)
-learningrate = 0.1
-numepoch = 50
+seed = 1
+learningrate = 0.05
+numepoch = 100
 torch.manual_seed(seed)
 
 t_set = np.loadtxt('traindata.csv', dtype=np.single, delimiter=',')
@@ -49,17 +49,17 @@ class MLP(nn.Module):
         return x
 
 
-NN = MLP()
+net = MLP()
 
 print("Parameter Names and Initial (random) values: ")
-for name, param in MLP.named_parameters(NN):
+for name, param in net.named_parameters():
     print("name:", name, "value:", param)
 
-predict = MLP(t_set)
+predict = net(t_set)
 print('accuracy:', accuracy(predict, t_label))
 
 loss_function = nn.MSELoss()
-optimizer = torch.optim.SGD(MLP.parameters(), lr=learningrate)
+optimizer = torch.optim.SGD(net.parameters(), lr=learningrate)
 
 lossRec = []
 vlossRec = []
@@ -68,17 +68,17 @@ trainAccRec = []
 validAccRec = []
 for i in range(numepoch):
     optimizer.zero_grad()
-    predict = MLP(t_set)
+    predict = net(t_set)
     loss = loss_function(input=predict.squeeze(), target=t_label.float())
     loss.backward()
     optimizer.step()
     trainAcc = accuracy(predict, t_label)
     # Computing Validation accuracy and loss
-    predict = MLP(v_set)
+    predict = net(v_set)
     vloss = loss_function(input=predict.squeeze(), target=v_label.float())
     validAcc = accuracy(predict, v_label)
 
-    print("loss: ", f'{loss:.4f}', " trainAcc: ", f'{trainAcc:.4f}', " validAcc: ", f'{validAcc:.4f}')
+    print("loss: ", f'{loss:.4f}',"validloss",f'{vloss:.4f}', " trainAcc: ", f'{trainAcc:.4f}', " validAcc: ", f'{validAcc:.4f}')
     lossRec.append(loss)
     vlossRec.append(vloss)
     nRec.append(i)
@@ -103,6 +103,7 @@ plt.ylabel('accuracy')
 plt.legend()
 plt.show()
 
-print("Model Weights")
-for name, param in MLP.named_parameters():
-    print("name:", name, "value:", param)
+
+#print("Model Weights")
+#for name, param in net.named_parameters():
+#    print("name:", name, "value:", param)
