@@ -1,19 +1,27 @@
 import torch
 import torch.nn as nn
-import torch.nn.Functional as F
+import torch.nn.functional as F
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-import game.py
-
 
 # Initialize Hyperparameters
-seed = random.randint(1,1000)
+seed = random.randint(1, 1000)
 learningrate = 0.1
 numepoch = 50
 torch.manual_seed(seed)
 
-def accuracy(predictions,label):
+t_set = np.loadtxt('traindata.csv', dtype=np.single, delimiter=',')
+t_label = np.loadtxt('trainlabel.csv', dtype=np.single, delimiter=',')
+v_set = np.loadtxt('validdata.csv', dtype=np.single, delimiter=',')
+v_label = np.loadtxt('validlabel.csv', dtype=np.single, delimiter=',')
+t_set = torch.from_numpy(t_set)
+t_label = torch.from_numpy(t_label)
+v_set = torch.from_numpy(v_set)
+v_label = torch.from_numpy(v_label)
+
+
+def accuracy(predictions, label):
     total_corr = 0
     index = 0
     for c in predictions.flatten():
@@ -23,33 +31,35 @@ def accuracy(predictions,label):
             r = 0.0
         if (r == label[index].item()):
             total_corr += 1
-        index +=1
-    return (total_corr/len(label))
+        index += 1
+    return (total_corr / len(label))
+
 
 class MLP(nn.Module):
     def __init__(self):
-        super(MLP,self).__init__()
-        self.fc1 = nn.Linear(8,6)
-        self.fc2 = nn.Linear(6,4)
-        self.fc3 = nn.Linear(4,2)
+        super(MLP, self).__init__()
+        self.fc1 = nn.Linear(9, 6)
+        self.fc2 = nn.Linear(6, 4)
+        self.fc3 = nn.Linear(4, 1)
 
-    def forward(self,x):
+    def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
 
+
 NN = MLP()
 
 print("Parameter Names and Initial (random) values: ")
-for name, param in MLP.named_parameters():
-    print("name:",name, "value:", param)
+for name, param in MLP.named_parameters(NN):
+    print("name:", name, "value:", param)
 
 predict = MLP(t_set)
-print('accuracy:',accuracy(predict,t_label))
+print('accuracy:', accuracy(predict, t_label))
 
 loss_function = nn.MSELoss()
-optimizer = torch.optim.SGD(MLP.parameters(),lr=learningrate)
+optimizer = torch.optim.SGD(MLP.parameters(), lr=learningrate)
 
 lossRec = []
 vlossRec = []
@@ -59,13 +69,13 @@ validAccRec = []
 for i in range(numepoch):
     optimizer.zero_grad()
     predict = MLP(t_set)
-    loss = loss_function(input = predict.squeeze(),target=t_label.float())
+    loss = loss_function(input=predict.squeeze(), target=t_label.float())
     loss.backward()
     optimizer.step()
-    trainAcc = accuracy(predict,t_label)
+    trainAcc = accuracy(predict, t_label)
     # Computing Validation accuracy and loss
     predict = MLP(v_set)
-    vloss = loss_function(input=predict.squeeze(),target=v_label.float())
+    vloss = loss_function(input=predict.squeeze(), target=v_label.float())
     validAcc = accuracy(predict, v_label)
 
     print("loss: ", f'{loss:.4f}', " trainAcc: ", f'{trainAcc:.4f}', " validAcc: ", f'{validAcc:.4f}')
@@ -77,16 +87,16 @@ for i in range(numepoch):
 
 # Plot out the loss and the accuracy, for both training and validation, vs. epoch
 
-plt.plot(nRec,lossRec, label='Train')
-plt.plot(nRec,vlossRec, label='Validation')
+plt.plot(nRec, lossRec, label='Train')
+plt.plot(nRec, vlossRec, label='Validation')
 plt.title('Training and Validation Loss vs. epoch')
 plt.xlabel('epoch')
 plt.ylabel('loss')
 plt.legend()
 plt.show()
 
-plt.plot(nRec,trainAccRec, label='Train')
-plt.plot(nRec,validAccRec, label='Validation')
+plt.plot(nRec, trainAccRec, label='Train')
+plt.plot(nRec, validAccRec, label='Validation')
 plt.title('Training and Validation Accuracy vs. epoch')
 plt.xlabel('epoch')
 plt.ylabel('accuracy')
@@ -95,4 +105,4 @@ plt.show()
 
 print("Model Weights")
 for name, param in MLP.named_parameters():
-    print("name:",name, "value:", param)
+    print("name:", name, "value:", param)
