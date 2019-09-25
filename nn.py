@@ -40,9 +40,9 @@ def accuracy(predictions, label):
 class MLP(nn.Module):
     def __init__(self):
         super(MLP, self).__init__()
-        self.fc1 = nn.Linear(9, 6)
-        self.fc2 = nn.Linear(6, 4)
-        self.fc3 = nn.Linear(4, 1)
+        self.fc1 = nn.Linear(9, 18)
+        self.fc2 = nn.Linear(18, 18)
+        self.fc3 = nn.Linear(18, 9)
 
     def forward(self, x):
         x = F.relu(self.fc1(x))

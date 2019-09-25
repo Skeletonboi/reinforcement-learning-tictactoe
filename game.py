@@ -11,17 +11,22 @@ class tictactoe:
 
     def isGameOver(self):
         win = False
+        winner = 0
         for i in range(0,len(self.state)):
             if self.state[i][0] == self.state[i][1] == self.state[i][2] != 0:
                 win = True
+                winner = self.state[i][0]
         for i in range(0,len(self.state[0])):
             if self.state[0][i] == self.state[1][i] == self.state[2][i] != 0:
                 win = True
+                winner = self.state[0][i]
         if self.state[0][0] == self.state[1][1] == self.state[2][2] != 0:
             win = True
+            winner = self.state[1][1]
         elif self.state[0][2] == self.state[1][1] == self.state[2][0] != 0:
             win = True
-        return win
+            winner = self.state[1][1]
+        return win, winner
 
     def reset(self):
         self.state = [[0,0,0],
