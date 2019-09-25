@@ -18,18 +18,13 @@ from game import tictactoe
 # Initialize tictactoe game
 x = tictactoe()
 board = x.outputState()
-board = torch.fromnumpy(board)
-print(board)
+board = torch.from_numpy(board)
 # Experience Replay Initialization
 eN = 20
 exp = [tuple([0,0,i]) for i in range(eN)]
-print(exp[19][2])
 
 # Initialize Q and target neural network
-hyp = hyperparams()
-hyp.setLr(0.05)
-hyp.setNumepoch(50)
-hyp.setSeed(1)
+hyp = hyperparams(0.5,1,50)
 
 torch.manual_seed(hyp.seed)
 
@@ -51,32 +46,48 @@ Qnet = MLP()
 # Target net is same as Qnet except is only updated every n runs
 Tnet = MLP()
 
-predict = net(t_set)
+# MDP Hyperparams
+numep = 50
+epsilon = 0.99
 
-loss_function = nn.MSELoss()
-optimizer = torch.optim.SGD(net.parameters(), lr=learningrate)
+# Episode Loop
+for ep in range(numep):
+    rand = random.random()
+    if rand > epsilon: #TEMPORARY
+        # Random Action
+        a = random.randint(0,8)
+    else:
+        # Exploit Action
+        predict = Qnet(board)
+        print(predict)
+    # Execute Action
 
-lossRec = []
-vlossRec = []
-nRec = []
-trainAccRec = []
-validAccRec = []
-for i in range(numepoch):
-    optimizer.zero_grad()
-    predict = net(t_set)
-    loss = loss_function(input=predict.squeeze(), target=t_label.float())
-    loss.backward()
-    optimizer.step()
-    trainAcc = accuracy(predict, t_label)
-    # Computing Validation accuracy and loss
-    predict = net(v_set)
-    vloss = loss_function(input=predict.squeeze(), target=v_label.float())
-    validAcc = accuracy(predict, v_label)
-
-    lossRec.append(loss)
-    vlossRec.append(vloss)
-    nRec.append(i)
-    trainAccRec.append(trainAcc)
-    validAccRec.append(validAcc)
-
- # State Reward Function
+#
+#
+# loss_function = nn.MSELoss()
+# optimizer = torch.optim.SGD(net.parameters(), lr=learningrate)
+#
+# lossRec = []
+# vlossRec = []
+# nRec = []
+# trainAccRec = []
+# validAccRec = []
+# for i in range(numepoch):
+#     optimizer.zero_grad()
+#     predict = net(t_set)
+#     loss = loss_function(input=predict.squeeze(), target=t_label.float())
+#     loss.backward()
+#     optimizer.step()
+#     trainAcc = accuracy(predict, t_label)
+#     # Computing Validation accuracy and loss
+#     predict = net(v_set)
+#     vloss = loss_function(input=predict.squeeze(), target=v_label.float())
+#     validAcc = accuracy(predict, v_label)
+#
+#     lossRec.append(loss)
+#     vlossRec.append(vloss)
+#     nRec.append(i)
+#     trainAccRec.append(trainAcc)
+#     validAccRec.append(validAcc)
+#
+#  # State Reward Function

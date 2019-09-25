@@ -123,7 +123,7 @@ class tictactoe:
         for i in range(len(self.state)):
             for j in range(3):
                 out.append(self.state[i][j])
-        return out
+        return np.array(out, dtype=np.single)
 
 
 
