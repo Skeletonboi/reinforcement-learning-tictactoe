@@ -26,6 +26,7 @@ class tictactoe:
         elif self.state[0][2] == self.state[1][1] == self.state[2][0] != 0:
             win = True
             winner = self.state[1][1]
+
         return win, winner
 
     def reset(self):
