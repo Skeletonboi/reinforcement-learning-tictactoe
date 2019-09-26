@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import random
 from nn import MLP, hyperparams
 from game import tictactoe
+from replay import Replay
 import math
 
 # Tictactoe board: [x1,...,x8] vector of length=9
@@ -18,8 +19,8 @@ import math
 
 
 # Experience Replay Initialization
-eN = 20
-exp = [tuple([0, 0, i]) for i in range(eN)]
+replay_num = 20
+m = Replay(replay_num)
 
 # Initialize Q and target neural network
 hyp = hyperparams(0.5, 2, 50)
@@ -48,23 +49,24 @@ Tnet = MLP()
 
 # MDP Hyperparams
 numep = 10
+# Agent can make at MOST 5 actions before forced termination
 numt = 5
 epsilon = 0.90
 
 # Episode Loop
 for ep in range(numep):
+    print('new game')
     # Initialize tictactoe game
     x = tictactoe()
-    board = x.outputState()
-    board = torch.from_numpy(board)
-    for t in range(numt):
+    terminate = False
+    while not terminate:
+        board = torch.from_numpy(x.outputState())
         rand = random.random()
         legal_rand = False
         if rand < epsilon:  # Random Action
             print('Random Action:')
             # Ensure it is legal, else resample
             while not legal_rand:
-                print('while rand')
                 a = random.randint(0, 8)
                 if board[a].item() == 0:
                     legal_rand = True
@@ -79,7 +81,6 @@ for ep in range(numep):
             if board[a].item() == 0:
                 legal_rand = True
             while not legal_rand:
-                print('while exploit')
                 predict = torch.cat([predict[:a], predict[(a+1):]])
                 q_max = torch.max(predict, 0)
                 a = q_max[1].item()
@@ -91,21 +92,30 @@ for ep in range(numep):
         print('board b4:',board)
         x.move(2, math.floor(a / 3), a % 3)
         # Get new state
-        board_t = x.outputState()
-        print('board after:',board_t)
+        board_next = torch.from_numpy(x.outputState())
+        print('board after:',board_next)
         # Check and assign immediate state reward, rt
-        temp = x.isGameOver()
-        if temp[0] == True:
-            if temp[1] == 1:
-                rt = -5
-            elif temp[1] == 2:
-                rt = 5
-        elif temp[0] == False:
-            rt = -1
-        # Store in experience tuple
-
-#
-#
+        stat = x.isGameOver()
+        terminate = stat[0]
+        if stat[0] == True:
+            if stat[1] == 1:
+                r = -5
+            elif stat[1] == 2:
+                r = 5
+        elif stat[0] == False:
+            r = -1
+        # Store experience tuple in replay memory
+        exp_t = tuple([board,a,r,board_next])
+        m.push(exp_t)
+        # Sample random minibatch of transitions(st,at,rt,st+1)
+        exp_sample = m.sample(min(m.firstpasscounter,5))
+        # Compute expected q(a|s_t) to optimize towards
+        # (error from all possible actions are averaged to optimize against)
+        for i in range(len(exp_sample)):
+            temp = i[3]  # Extract board_t+1 tensor
+            game_sample = tictactoe()
+            for j in range(9):
+                game_sample.state = [[i[3][state]]]
 # loss_function = nn.MSELoss()
 # optimizer = torch.optim.SGD(net.parameters(), lr=learningrate)
 #
