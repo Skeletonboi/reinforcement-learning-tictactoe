@@ -47,7 +47,7 @@ Qnet = MLP()
 Tnet = MLP()
 
 # MDP Hyperparams
-numep = 50
+numep = 10
 numt = 5
 epsilon = 0.90
 
@@ -61,30 +61,38 @@ for ep in range(numep):
         rand = random.random()
         legal_rand = False
         if rand < epsilon:  # Random Action
+            print('Random Action:')
             # Ensure it is legal, else resample
             while not legal_rand:
+                print('while rand')
                 a = random.randint(0, 8)
-                if board[a] == 0:
+                if board[a].item() == 0:
                     legal_rand = True
         else:  # Exploit Action
+            print('Exploit Action:')
             # Compute Q values of all actions
             predict = Qnet(board)
             q_max = torch.max(predict, 0)
             # Take highest Q value action
             a = q_max[1].item()
             # Ensure legality, else take next highest
+            if board[a].item() == 0:
+                legal_rand = True
             while not legal_rand:
-                if board[a] == 0:
-                    legal_rand = True
-                predict_new = torch.cat([predict[:a], torch.tensor([-999]),predict[a+1:]])
-                q_max = torch.max(predict_new,0)
+                print('while exploit')
+                predict = torch.cat([predict[:a], predict[(a+1):]])
+                q_max = torch.max(predict, 0)
                 a = q_max[1].item()
+                if board[a].item() == 0:
+                    legal_rand = True
 
         # Execute Action
-        legal = x.move(2, math.floor(a / 3), a % 3)
+        print('a:',a)
+        print('board b4:',board)
+        x.move(2, math.floor(a / 3), a % 3)
         # Get new state
         board_t = x.outputState()
-        print(board_t)
+        print('board after:',board_t)
         # Check and assign immediate state reward, rt
         temp = x.isGameOver()
         if temp[0] == True:
